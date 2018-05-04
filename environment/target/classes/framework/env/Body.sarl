@@ -1,0 +1,32 @@
+/** 
+ * 
+ */
+package framework.env
+
+/** 
+ * @author cd
+ * 
+ */
+class Body {
+	var xPosition : float
+	var yPosition : float
+	new(xPosition : float, yPosition : float) {
+		this.xPosition = xPosition
+		this.yPosition = yPosition
+	}
+
+	def getxPosition : float {
+		this.xPosition
+	}
+	def getyPosition : float {
+		this.yPosition
+	}
+
+	def setxPosition(xPosition : float) : float {
+		this.xPosition = xPosition
+	}
+
+	def setyPosition(yPosition : float) : float {
+		this.yPosition = yPosition
+	}
+}

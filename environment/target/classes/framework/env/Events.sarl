@@ -1,0 +1,23 @@
+/** 
+ * 
+ */
+package framework.env
+
+import java.util.List
+
+/** 
+ * @author cd
+ * 
+ */
+event PerceptionEvent {
+	val perceptions : List<Perception>
+	new( perceptions : List<Perception>){
+		this.perceptions = perceptions
+	}
+}
+event InfluenceEvent {
+	val influences : List<Influence>
+	new ( influences : List<Influence>){
+		this.influences = influences
+	}
+}

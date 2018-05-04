@@ -1,0 +1,96 @@
+/** 
+ * 
+ */
+package framework.env
+
+import io.sarl.core.AgentKilled
+import io.sarl.core.AgentSpawned
+import io.sarl.core.ContextJoined
+import io.sarl.core.ContextLeft
+import io.sarl.core.Destroy
+import io.sarl.core.Initialize
+import io.sarl.core.Logging
+import io.sarl.core.MemberJoined
+import io.sarl.core.MemberLeft
+import io.sarl.core.Lifecycle
+import io.sarl.core.DefaultContextInteractions
+import java.util.List
+import java.util.ArrayList
+import framework.env.Influence
+import framework.env.InfluenceEvent
+import framework.env.iSpawnHere
+import framework.env.move
+/** 
+ * @author cd
+ * 
+ */
+agent EnvironmentAgent {
+	uses Logging, DefaultContextInteractions, Lifecycle
+	var Bodies = new ArrayList<Body>
+
+	on Initialize {
+		info("The EnvironmentAgent was started.")
+	}
+
+	on Destroy {
+		// Event trigger when the agent is destroyed from the system.
+		// You should put all the resource releasing statements in this block of code.
+		info("The EnvironmentAgent was stopped.")
+	}
+
+	on AgentSpawned {
+		// A new agent has been spawned in our context.
+	}
+
+	on AgentKilled {
+		// A new agent has been killed in our context.
+	}
+
+	on ContextJoined {
+		// Event trigger when an agent of the level joins a shared context.
+		// Sent to a agent of the same level.
+	}
+
+	on ContextLeft {
+		// Event trigger when an agent of the level jleaves a shared context.
+		// Sent to a agent of the same level.
+	}
+
+	on MemberJoined {
+		// Event trigger when an agent joins one of our shared super-holons.
+		// Sent to all members of the considered super-holon.
+	}
+
+	on MemberLeft {
+		// Event trigger when an agent leaves one of our shared super-holons.
+		// Sent to all members of the considered super-holon.
+	}
+	
+	on InfluenceEvent {
+		for (influence : occurrence.influences){
+			run(influence)
+			
+		}
+	}
+	def run() {}
+	dispatch def run(Influence : Influence) {
+		info("influence")
+	}
+	dispatch def run(iSpawnHere : iSpawnHere) {
+		this.Bodies.add(new Body(iSpawnHere.getxPosition, iSpawnHere.getyPosition))
+		info("Agent spawn x: " + iSpawnHere.getxPosition + " y: " + iSpawnHere.getyPosition)
+	}
+	dispatch def run(move : move) {
+		for(Body : this.Bodies)
+		Body.setxPosition(move.getxPosition)
+		Body.setyPosition(move.getyPosition)
+		info("Agent moveto x: " + move.getxPosition + " y: " + move.getyPosition)
+	}
+	dispatch def run(whereAmI : whereAmI) {
+		for (Body : this.Bodies)
+		emit(new PerceptionEvent(newArrayList(new bodyPerception(Body.getxPosition, Body.getyPosition))))
+	}
+
+
+	
+}

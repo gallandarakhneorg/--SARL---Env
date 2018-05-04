@@ -1,0 +1,94 @@
+/** 
+ * 
+ */
+package framework.^agent
+
+import io.sarl.core.AgentKilled
+import io.sarl.core.AgentSpawned
+import io.sarl.core.ContextJoined
+import io.sarl.core.ContextLeft
+import io.sarl.core.Destroy
+import io.sarl.core.Initialize
+import io.sarl.core.Logging
+import io.sarl.core.MemberJoined
+import io.sarl.core.MemberLeft
+import io.sarl.core.DefaultContextInteractions
+import framework.env.Influence
+import framework.env.InfluenceEvent
+import framework.env.iSpawnHere
+import framework.env.whereAmI
+import framework.env.move
+import java.util.Random
+import java.util.List
+import io.sarl.core.Schedules
+import framework.env.PerceptionEvent
+import framework.env.Perception
+import framework.env.bodyPerception
+
+
+/** 
+ * @author cd
+ * 
+ */
+agent AbstractAgent {
+	uses Logging, DefaultContextInteractions, Schedules
+	val random = new Random
+
+	on Initialize {
+		emit(new InfluenceEvent(newArrayList(new iSpawnHere(random.nextFloat() * 10f, random.nextFloat() * 10f))))
+		info("The agent was started.")
+		every(10000) [
+			emit(new InfluenceEvent(newArrayList(new move(random.nextFloat() * 10f, random.nextFloat() * 10f))))
+			emit(new InfluenceEvent(newArrayList(new whereAmI)))
+		]
+	}
+
+	on Destroy {
+		// Event trigger when the agent is destroyed from the system.
+		// You should put all the resource releasing statements in this block of code.
+		info("The agent was stopped.")
+	}
+
+	on AgentSpawned {
+		// A new agent has been spawned in our context.
+	}
+
+	on AgentKilled {
+		// A new agent has been killed in our context.
+	}
+
+	on ContextJoined {
+		// Event trigger when an agent of the level joins a shared context.
+		// Sent to a agent of the same level.
+	}
+
+	on ContextLeft {
+		// Event trigger when an agent of the level jleaves a shared context.
+		// Sent to a agent of the same level.
+	}
+
+	on MemberJoined {
+		// Event trigger when an agent joins one of our shared super-holons.
+		// Sent to all members of the considered super-holon.
+	}
+
+	on MemberLeft {
+		// Event trigger when an agent leaves one of our shared super-holons.
+		// Sent to all members of the considered super-holon.
+	}
+
+	on PerceptionEvent {
+		for (perception : occurrence.perceptions) {
+			run(perception)
+
+		}
+	}
+	
+	def run() {}
+	dispatch def run(Perception : Perception) {
+		info("perception")
+	}
+	dispatch def run(bodyPerception : bodyPerception) {
+		info(" i see myself in x: " + bodyPerception.getxPosition + " y: " + bodyPerception.getyPosition)
+	}
+}
